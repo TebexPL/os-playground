@@ -24,85 +24,54 @@ LOAD_STAGE2:
 	mov cx, READ_ERROR.len
 	jc PRINT_ERROR
 PARSE_MBR:
-
-	mov ecx, 0x6AB969CD
+	;decimal print
+	mov cl, 0x12
+	call PRINT_BX
+	call PRINT_NL
+	mov cx, 0x1234
+	call PRINT_WX
+	call PRINT_NL
+	mov ecx, 0x12345678
 	call PRINT_DX
+	call PRINT_NL
+
+	;hex print
+	mov cl, 123
+	call PRINT_BD
+	call PRINT_NL
+	mov cx, 12345
+	call PRINT_WD
+	call PRINT_NL
+	mov ecx, 1234567890
+	call PRINT_DD
+	call PRINT_NL
+
+	;print with length
+	mov si, EXAMPLE.msg
+	mov cx, word [EXAMPLE.len]
+	call PRINT_STRN
+	call PRINT_NL
+	
+	;print zero terminated
+	call PRINT_STR
+	call PRINT_NL
 	
 	jmp $
 
+
+PRINT_ERROR:
+	mov si, READ_ERROR.msg
+	call PRINT_STR
+	jmp $
+
+	
+%include "print.asm"
 
 BOOTDISKNUM: db 0x00
 
-PRINT_X:
-	cmp al, 0x0A
-	jae .l
-	add al, '0'
-	jmp .print
-
-	.l:
-	add al, 0x37
-	.print:
-	int 0x10 
-	ret
-
-_PRINT_BX:
-	mov al, cl
-	shr al, 0x04
-	call PRINT_X
-	mov al, cl
-	and al, 0x0F
-	call PRINT_X
-	ret
-
-PRINT_BX:
-	push ax
-	mov ax, 0x0E30
-	int 0x10
-	mov al, 'x'
-	int 0x10
-	call _PRINT_BX
-	pop ax
-	ret
-
-_PRINT_WX:
-	xchg ch, cl
-	call _PRINT_BX
-	xchg ch, cl
-	call _PRINT_BX
-	ret 
-	
-PRINT_WX:
-	push ax
-	mov ax, 0x0E30
-	int 0x10
-	mov al, 'x'
-	int 0x10
-	call _PRINT_WX
-	pop ax
-	ret
-
-PRINT_DX:
-	push ax
-	mov ax, 0x0E30
-	int 0x10
-	mov al, 'x'
-	int 0x10
-	ror ecx, 0x10
-	call _PRINT_WX
-	ror ecx, 0x10
-	call _PRINT_WX
-	pop ax
-	ret
-
-PRINT_ERROR:
-	mov ah, 0x0E
-	.loop:
-		lodsb
-		int 0x10
-		loop .loop
-	cli
-	jmp $
-
+EXAMPLE:
+	.msg: db "Test message", 0x00
+	.len: dw $-.msg-1
 
 READ_ERROR:
 	.msg: db "Disk error..."
