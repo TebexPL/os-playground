@@ -7,11 +7,7 @@ START:
 	mov ds, ax
 	mov ax, 0x0050
 	mov es, ax
-	mov fs, ax
-	mov gs, ax
-	xor ax, ax
 	cli
-	mov ss, ax
 	mov si, START
 	mov di, START
 	mov cx, 0x200
@@ -34,6 +30,11 @@ LOAD_STAGE2:
 	xor bx, bx
 	int 0x13
 	jc PRINT_ERROR
+	xor ax, ax
+	mov ds, ax
+	mov es, ax
+	mov fs, ax
+	mov gs, ax
 	jmp 0x0000:0x1000
 
 

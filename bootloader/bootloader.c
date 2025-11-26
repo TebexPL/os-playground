@@ -1,6 +1,10 @@
 
 
-int main(){
+extern void puts(char* s);
+extern void putchar(char c);
 
-return 0;
+int main(){
+	puts("Test");
+	putchar('!');
+	return 0;
 }
