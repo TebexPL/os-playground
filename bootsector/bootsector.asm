@@ -1,3 +1,7 @@
+BITS 16
+CPU 386
+
+
 START:
 	mov ax, 0x07C0
 	mov ds, ax
@@ -30,7 +34,7 @@ LOAD_STAGE2:
 	xor bx, bx
 	int 0x13
 	jc PRINT_ERROR
-	jmp 0x0100:0x0000
+	jmp 0x0000:0x1000
 
 
 PRINT_ERROR:

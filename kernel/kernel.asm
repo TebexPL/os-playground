@@ -1,10 +1,11 @@
-BITS 16
-section .entry
-
+BITS 32
 
 extern main
+
+section .entry
+
 global start
 start:
 xchg bx,bx
-call 0x0000:main
+call main
 jmp $
