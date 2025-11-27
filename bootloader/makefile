@@ -2,25 +2,26 @@ AS:=nasm
 CC:=i386-elf-gcc
 LD:=i386-elf-gcc
 OBJCOPY:=i386-elf-objcopy
-CFLAGS:=-ffreestanding -Wall -Wextra -m16 -Os -I $(CURDIR)/include
-LDFLAGS:= -m16 -nostdlib -nostdlib -nostartfiles -nodefaultlibs -lgcc 
+CFLAGS:= -c -ffreestanding -Wall -Wextra -m16 -Os -I ../include
+LDFLAGS:= -m16 -nostdlib -nostdlib -nostartfiles -nodefaultlibs -lgcc -T bootloader.ld
+ASFLAGS:= -f elf32 --include ../include/defines16.asm
+OBJFLAGS:= -O binary
 
 all: clean bootloader.bin
 
 %.co : %.c
-	$(CC) -c $(CFLAGS) $< -o $@
+	$(CC) $(CFLAGS) $< -o $@
 
 %.ao : %.asm
-	$(AS) -f elf32 $< -o $@
+	$(AS) $(ASFLAGS) $< -o $@
 
 %.elf : %.co %.ao
-	$(LD) $(LDFLAGS) -T bootloader.ld $^ -o $@ 
+	$(LD) $(LDFLAGS) $^ -o $@ 
 
 %.bin : %.elf
-	$(OBJCOPY) -O binary $< $@
+	$(OBJCOPY) $(OBJFLAGS) $< $@
 
-
-bootloader.elf : bootloader.ao bootloader.co 
+bootloader.elf : bootloader.ao bootloader.co stdio.ao
 
 clean:
 	rm -rf *.bin *.co *.ao *.elf

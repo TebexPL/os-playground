@@ -1,4 +1,6 @@
-.PHONY: clean bootsector bootloader kernel disk partition run debug all
+.PHONY: clean bootsector bootloader kernel disk partition run debug all 
+
+
 
 clean:
 	cd bootsector && make clean
@@ -6,6 +8,7 @@ clean:
 	cd kernel && make clean
 	rm -rf disk.img
 	rm -rf part.img
+
 
 disk: 
 	dd if=/dev/zero of=disk.img bs=1M count=100
@@ -21,7 +24,7 @@ bootsector: disk
 	cd bootsector && make all;
 	dd if=bootsector/bootsector.bin of=disk.img conv=notrunc bs=1 count=446
 
-bootloader: disk
+bootloader: disk 
 	cd bootloader && make all;
 	dd if=bootloader/bootloader.bin of=disk.img conv=notrunc seek=1 
 
