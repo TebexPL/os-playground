@@ -21,7 +21,7 @@ all: clean bootloader.bin
 %.bin : %.elf
 	$(OBJCOPY) $(OBJFLAGS) $< $@
 
-bootloader.elf : bootloader.ao bootloader.co stdio.ao
+bootloader.elf : bootloader.ao bootloader.co stdio.ao stdio.co
 
 clean:
 	rm -rf *.bin *.co *.ao *.elf

@@ -26,8 +26,7 @@ typedef struct __attribute__((packed)){
 
 int main(){
 	MBR *mbr = (MBR*)0x0500;
-	printBX(16);
-
+	printf("B: %d", 16);
 	
 	while(1){
 	}
