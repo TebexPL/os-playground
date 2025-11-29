@@ -3,7 +3,8 @@ CC:=i386-elf-gcc
 LD:=i386-elf-gcc
 OBJCOPY:=i386-elf-objcopy
 CFLAGS:= -c -ffreestanding -Wall -Wextra -m16 -Os -I ../include
-LDFLAGS:= -m16 -nostdlib -nostdlib -nostartfiles -nodefaultlibs -lgcc -T bootloader.ld
+LDFLAGS:= -m16 -nostdlib -nostdlib -nostartfiles -nodefaultlibs -T bootloader.ld 
+LIBS:= -lgcc
 ASFLAGS:= -f elf32 --include ../include/defines16.asm
 OBJFLAGS:= -O binary
 
@@ -16,7 +17,7 @@ all: clean bootloader.bin
 	$(AS) $(ASFLAGS) $< -o $@
 
 %.elf : %.co %.ao
-	$(LD) $(LDFLAGS) $^ -o $@ 
+	$(LD) $(LDFLAGS) $^ -o $@ $(LIBS)
 
 %.bin : %.elf
 	$(OBJCOPY) $(OBJFLAGS) $< $@
