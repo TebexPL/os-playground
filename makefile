@@ -8,7 +8,7 @@ clean:
 	cd kernel && make clean
 	rm -rf disk.img
 	rm -rf part.img
-
+	rm -rf disk.img.lock
 
 disk: 
 	dd if=/dev/zero of=disk.img bs=1M count=100

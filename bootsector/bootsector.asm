@@ -22,7 +22,7 @@ START:
 
 LOAD_STAGE2:
 	mov byte [BOOTDISKNUM], dl
-	mov ax, 0x0207
+	mov ax, 0x021F
 	mov cx, 0x0002
 	mov dh, 0x00
 	mov bx, 0x0100
