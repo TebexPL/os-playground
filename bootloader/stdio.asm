@@ -31,30 +31,3 @@ section .text
 		cdecl_exit
 
 
-	_PRINTX:
-		add al, '0'
-		cmp al, '9'
-		jbe .print
-		add al, 0x07
-		.print:
-		int 0x10 
-		ret
-
-	_PRINTBX:
-		mov al, cl
-		shr al, 0x04
-		call _PRINTX
-		mov al, cl
-		and al, 0x0F
-		call _PRINTX
-		ret
-
-	function printBX
-	cdecl_entry
-	mov ax, 0x0E30
-	int 0x10
-	mov al, 'x'
-	int 0x10
-	mov ecx, cdecl_param(0)
-	call _PRINTBX
-	cdecl_exit

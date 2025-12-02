@@ -8,6 +8,8 @@ START:
 	mov ax, 0x0050
 	mov es, ax
 	cli
+	xchg bx,bx	
+	call TEST_A20
 	mov si, START
 	mov di, START
 	mov cx, 0x200
@@ -48,6 +50,28 @@ PRINT_ERROR:
 		loop .loop
 	jmp $
 
+
+TEST_A20:
+	push 0x0000
+	pop fs
+	push 0xFFFF
+	pop gs
+	push word[fs:0x0500]
+	push word[gs:0x0510]
+	mov word[fs:0x0500], ax
+	not ax
+	mov word[gs:0x0510], ax
+	cmp word[fs:0x0500], ax
+	pop word[gs:0x0510]
+	pop word[fs:0x0500]
+	je .eq
+	.neq:
+		stc
+		ret
+
+	.eq:
+		clc
+		ret
 	
 
 BOOTDISKNUM: db 0x00
