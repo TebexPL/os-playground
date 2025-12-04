@@ -1,4 +1,4 @@
-.PHONY: clean bootsector bootloader kernel disk partition run debug all 
+.PHONY: clean bootsector bootloader kernel disk partition run debug all vhd
 
 
 
@@ -6,8 +6,7 @@ clean:
 	cd bootsector && make clean
 	cd bootloader && make clean
 	cd kernel && make clean
-	rm -rf disk.img
-	rm -rf part.img
+	rm -rf disk.vhd
 	rm -rf disk.img.lock
 
 disk: 
@@ -35,9 +34,13 @@ kernel: partition disk
 
 all: bootsector bootloader kernel
 
-run: clean bootsector bootloader kernel
+vhd: clean all
+	VBoxManage convertfromraw disk.img disk.vhd --format=vhd --uuid "d57780cc-0323-4090-b7bf-471de6309212"
+	VirtualBoxVM --startvm OS
+
+run: clean all
 	bochs -f bochs.conf -q
 	
-debug: clean bootsector bootloader kernel
+debug: clean all
 	bochs -f bochs.conf -q -debugger
 
