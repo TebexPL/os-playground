@@ -8,9 +8,9 @@
 
 
 int main(){
-	MBR *mbr = (MBR*)0x0500;
 
-	printf("Bootloader.");
+
+	printf("Bootloader.\r\n");
 
 	while(1){
 	}

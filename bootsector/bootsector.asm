@@ -1,62 +1,59 @@
 BITS 16
 CPU 386
 
+%define START_SEGMENT 0x07C0
+%define SECTOR_SIZE 0x0200
+%define STAGE2_SEGMENT 0xFFFF
+%define STAGE2_OFFSET 0x0010
 
 START:
-	mov ax, 0x07C0
-	mov ds, ax
-	mov ax, 0x0050
-	mov es, ax
 	cli
+	mov ax, START_SEGMENT
+	mov ds, ax
+	jmp START_SEGMENT:ALIGN_CS
+	
+ALIGN_CS:
 	call A20_TEST
-		jc .open
+		jc LOAD_STAGE2
 	call A20_BIOS
 	call A20_TEST
-		jc .open
+		jc LOAD_STAGE2
 	call A20_KBD
 	call A20_WAIT
 	call A20_TEST
-		jc .open
+		jc LOAD_STAGE2
 	call A20_FAST
 	call A20_WAIT
 	call A20_TEST
 		mov si, ERROR_A20
 		mov cx, _ERROR_A20-ERROR_A20
 		jnc PRINT_ERROR
-	.open:
-	mov si, START
-	mov di, START
-	mov cx, 0x200
-	cld
-	rep movsb
-	mov ax, 0x0050
-	mov ds, ax
-	mov sp, 0x1000
+
+LOAD_STAGE2:	
 	sti
-	jmp 0x0050:LOAD_STAGE2
-
-
-LOAD_STAGE2:
-	mov byte [BOOTDISKNUM], dl
-	mov ax, 0x021F
+	mov ax, 0x023F
 	mov cx, 0x0002
 	mov dh, 0x00
-	mov bx, 0x0100
-	mov es, bx
-	xor bx, bx
+	push STAGE2_SEGMENT
+	pop es
+	mov bx, STAGE2_OFFSET
 	int 0x13
 	mov si, ERROR_READ
 	mov cx, _ERROR_READ-ERROR_READ
 	jc PRINT_ERROR
-	xor ax, ax
+	cli
+	mov ax, STAGE2_SEGMENT
+	mov ss, ax
 	mov ds, ax
-	mov es, ax
-	mov fs, ax
-	mov gs, ax
-	jmp 0x0000:0x1000
+	mov ax, 0xFFFE
+	mov sp, ax
+	sti
+	xchg bx,bx
+	jmp STAGE2_SEGMENT:STAGE2_OFFSET
 
 
 PRINT_ERROR:
+	sti
 	mov ah, 0x0E
 	.loop:
 		lodsb 
@@ -155,8 +152,6 @@ A20_TEST:
 		clc
 		ret
 	
-
-BOOTDISKNUM: db 0x00
 
 ERROR_READ: db "Boot media error."
 _ERROR_READ:

@@ -2,21 +2,21 @@ ENTRY(start)
 
 SECTIONS
 {
-	. = 0x1000;
-	.text BLOCK(2K) : ALIGN(2K)
+	. = 0x0010;
+	.text BLOCK(16) : ALIGN(16)
 	{
 		*(.entry)
 		*(.text)
 	}
-	.rodata BLOCK(2K) : ALIGN(2K)
+	.rodata BLOCK(16) : ALIGN(16)
 	{
 		*(.rodata)
 	}
-	.data BLOCK(2K) : ALIGN(2K)
+	.data BLOCK(16) : ALIGN(16)
 	{
 		*(.data)
 	}
-	.bss BLOCK(2K) : ALIGN(2K)
+	.bss BLOCK(16) : ALIGN(16)
 	{
 		*(COMMON)
 		*(.bss)
