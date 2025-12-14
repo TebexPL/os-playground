@@ -2,9 +2,10 @@ BITS 16
 CPU 386
 
 %define START_SEGMENT 0x07C0
+%define RELOCATE_SEGMENT 0x1000
 %define SECTOR_SIZE 0x0200
-%define STAGE2_SEGMENT 0xFFFF
-%define STAGE2_OFFSET 0x0010
+%define STAGE2_SEGMENT 0x0000
+%define STAGE2_OFFSET 0x0500
 
 %macro outbyte 2 
 	call write_wait
@@ -13,10 +14,28 @@ CPU 386
 %endmacro
 
 
-START:
+RELOCATE:
 	cli
 	mov ax, START_SEGMENT
 	mov ds, ax
+	mov ax, RELOCATE_SEGMENT
+	mov es, ax
+	mov ss, ax
+	xor ax, ax
+	mov si, ax
+	mov di, ax
+	mov cx, 0x200
+	cld
+	rep movsb
+	mov ax, RELOCATE_SEGMENT
+	mov ds, ax
+	mov sp, 0x0000
+	sti
+	jmp RELOCATE_SEGMENT:START
+
+
+START:
+	cli
 	xor ax, ax 
 	mov fs, ax
 	not ax

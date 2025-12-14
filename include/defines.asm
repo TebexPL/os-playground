@@ -1,8 +1,6 @@
-BITS 16
+BITS 32
 CPU 386
 
-%define call call dword
-%define ret o32 ret
 
 %macro cdecl_entry 0
 	push ebp 
@@ -15,7 +13,6 @@ CPU 386
 %endmacro
 
 %define cdecl_param(i) [ss:ebp+0x08+(i*4)]
-
 
 %macro function 1
 	global %1

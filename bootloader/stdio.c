@@ -152,7 +152,7 @@ int printf(char *fmt, ...){
             if(type==0)
                 continue;
             else if(type==8){
-                uvalue = (uintmax_t)va_arg(args, void *);
+                uvalue = (size_t)va_arg(args, void *);
                 if(uvalue == 0){
                     sptr = (char *)"(nil)";
                     char *tmp = sptr;

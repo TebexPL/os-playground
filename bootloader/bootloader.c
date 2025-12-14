@@ -2,16 +2,11 @@
 #include <stdio.h>
 #include <stdint.h>
 
-
 #include <mbr.h>
-
-
 
 int main(){
 
-
-	printf("Bootloader.\r\n");
-
+	printf("Printf dziala normalnie: %d\n\r", 1234);
 	while(1){
 	}
 

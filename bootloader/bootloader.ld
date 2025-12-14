@@ -2,7 +2,7 @@ ENTRY(start)
 
 SECTIONS
 {
-	. = 0x0010;
+	. = 0x0500;
 	.text BLOCK(16) : ALIGN(16)
 	{
 		*(.entry)

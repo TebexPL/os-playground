@@ -2,10 +2,10 @@ AS:=nasm
 CC:=i386-elf-gcc
 LD:=i386-elf-gcc
 OBJCOPY:=i386-elf-objcopy
-CFLAGS:= -c -ffreestanding -Wall -Wextra -m16 -Os -I ../include
-LDFLAGS:= -m16 -nostdlib -nostdlib -nostartfiles -nodefaultlibs -T bootloader.ld 
-LIBS:= -lgcc16
-ASFLAGS:= -f elf32 --include ../include/defines16.asm
+CFLAGS:= -c -ffreestanding -Wall -Wextra -Os -I ../include
+LDFLAGS:= -nostdlib -nostartfiles -nodefaultlibs -T bootloader.ld 
+LIBS:= -lgcc
+ASFLAGS:= -f elf32 --include ../include/defines.asm
 OBJFLAGS:= -O binary
 
 all: clean bootloader.bin
