@@ -8,96 +8,77 @@ section .entry
 		[BITS 16]
 		cli
 		lgdt [GDTR]
+		call goto32
+		[BITS 32]
+		sti
+		call main
+		jmp $
+		
+	global goto16
+	goto16:
+		[BITS 32]
+		push eax
+		jmp dword 0x18:.protected16
+		[BITS 16]
+		.protected16:
+			mov ax, 0x0020
+			mov ds, ax
+			mov es, ax
+			mov fs, ax
+			mov gs, ax
+			mov ss, ax
+			mov eax, cr0
+			and eax, 0xFFFFFFFE
+			mov cr0, eax
+			jmp 0x0000:.real
+		.real:
+			xor ax, ax
+			mov ds, ax
+			mov es, ax
+			mov fs, ax
+			mov gs, ax
+			mov eax, esp
+			cmp eax, 0x8000
+			mov ax, 0x0000
+			jbe .segmentReady
+			mov eax, esp
+			sub eax, 0x8000
+			shr eax, 0x04
+			cmp eax, 0xFFFF
+			jb .segmentReady
+			mov eax, 0x0000FFFF
+		.segmentReady:
+			mov ss, ax
+			shl eax, 0x04
+			sub esp, eax
+			pop eax
+			lidt [IDTR16]
+			ret	
+
+	global goto32
+	goto32:
+	[BITS 16]
+		push eax
 		mov eax, cr0
 		or eax, 1
 		mov cr0, eax
-		;jmp dword 0x08:(0xFFFF0+.protected32)
 		jmp dword 0x08:(.protected32)
 		[BITS 32]
 		.protected32:
+			xor eax, eax
+			mov ax, ss
+			shl eax, 0x10
 			mov ax, 0x0010
 			mov ds, ax
 			mov es, ax
 			mov fs, ax
 			mov gs, ax
 			mov ss, ax
-			;mov eax, esp
-			;add eax, 0xFFFF0
-			;mov esp, eax
-			;lidt [IDTR+0xFFFF0]	
-		lidt [IDTR]
-		
-		sti
-
-		call main
-		jmp $
-
-	goto16:
-	jmp dword 0x18:.protected16
-	[BITS 16]
-	.protected16:
-	push eax
-	mov ax, 0x0020
-	mov ds, ax
-	mov es, ax
-	mov fs, ax
-	mov gs, ax
-	mov ss, ax
-	;mov eax, esp
-	;sub eax, 0xFFFF0
-	;mov esp, eax
-
-	mov eax, cr0
-	and eax, 0xFFFFFFFE
-	mov cr0, eax
-	;jmp 0xFFFF:.real
-	jmp 0x0000:.real
-	.real:
-	;mov ax, 0xFFFF
-	xor ax, ax
-	mov ds, ax
-	mov es, ax
-	mov fs, ax
-	mov gs, ax
-	mov ss, ax
-	pop eax
-
-	;push ebp
-	;mov ebp, esp
-	;sub dword [ss:bp+4], 0xFFFF0
-	;pop ebp
-	lidt [IDTR16]
-	ret	
-
-
-	goto32:
-	push eax
-	mov eax, cr0
-	or eax, 1
-	mov cr0, eax
-	;jmp dword 0x08:(0xFFFF0+.protected32)
-	jmp dword 0x08:(.protected32)
-	[BITS 32]
-	.protected32:
-		mov ax, 0x0010
-		mov ds, ax
-		mov es, ax
-		mov fs, ax
-		mov gs, ax
-		mov ss, ax
-		;mov eax, esp
-		;add eax, 0xFFFF0
-		;mov esp, eax
-		pop eax
-		;push ebp
-		;mov ebp, esp
-		;add dword [ss:ebp+4], 0xFFFF0
-		;pop ebp
-		;lidt [IDTR+0xFFFF0]	
-		lidt [IDTR]
-		ret
-
-
+			shr eax, 0x0C
+			add esp, eax
+			pop eax
+			lidt [IDTR]
+			ret
 
 ISRS:
 %assign i 0 
@@ -113,18 +94,6 @@ ISRS:
 %assign i i+1 
 %endrep
 .end:
-
-section .text
-
-	global flatRead
-	flatRead:
-		
-	
-
-	global flatWrite
-	flatWrite:
-
-section .data
 	GDTR:
 	.size: dw (GDT.end - GDT)-1
 	.address: dd GDT
@@ -150,6 +119,7 @@ section .data
 %assign i i+1 
 %endrep
 	.end:
+
 
 
 	
